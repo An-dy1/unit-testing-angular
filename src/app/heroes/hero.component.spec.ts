@@ -33,7 +33,22 @@ describe('HeroesComponent', () => {
       component.heroes = HEROES;
 
       component.delete(HEROES[2]);
+
+      // state-based test: state of component has changed in its length
       expect(component.heroes.length).toBe(2);
+    });
+
+    it('should call deleteHero with correct hero', () => {
+      // the delete method in the component subscribes to an observable, so that's what we need our Spy to return
+      mockHeroService.deleteHero.and.returnValue(of(true));
+
+      // populate the heroes property with our sample data
+      component.heroes = HEROES;
+
+      component.delete(HEROES[2]);
+
+      // interaction test - check that a method was called during the deleteHero method
+      expect(mockHeroService.deleteHero).toHaveBeenCalledWith(HEROES[2]);
     });
   });
 });

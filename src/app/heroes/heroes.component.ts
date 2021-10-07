@@ -35,7 +35,6 @@ export class HeroesComponent implements OnInit {
   delete(hero: Hero): void {
     this.heroes = this.heroes.filter((h) => h !== hero);
 
-    // the delete method in the component subscribes to an observable, so that's what we need our Spy to return
     this.heroService.deleteHero(hero).subscribe();
   }
 }
