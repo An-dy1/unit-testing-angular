@@ -1,6 +1,8 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
+import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
 import { HeroesComponent } from './heroes.component';
 
@@ -8,6 +10,15 @@ describe('Heroes component, shallow test', () => {
   let fixture: ComponentFixture<HeroesComponent>;
   let mockHeroService;
   let HEROES;
+
+  @Component({
+    selector: 'app-hero',
+    template: '<div></div>',
+  })
+  class fakeHeroComponent {
+    @Input() hero: Hero;
+    // @Output() delete = new EventEmitter();
+  }
 
   beforeEach(() => {
     HEROES = [
@@ -23,14 +34,14 @@ describe('Heroes component, shallow test', () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [HeroesComponent],
+      declarations: [HeroesComponent, fakeHeroComponent],
       providers: [
         {
           provide: HeroService,
           useValue: mockHeroService,
         },
       ],
-      schemas: [NO_ERRORS_SCHEMA],
+      //   schemas: [NO_ERRORS_SCHEMA],
     });
     fixture = TestBed.createComponent(HeroesComponent);
   });
@@ -40,5 +51,14 @@ describe('Heroes component, shallow test', () => {
     fixture.detectChanges();
 
     expect(fixture.componentInstance.heroes.length).toBe(3);
+  });
+
+  it(`should create on li per hero`, () => {
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+
+    // this calls ngOnInit()
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.queryAll(By.css('li')).length).toBe(3);
   });
 });
